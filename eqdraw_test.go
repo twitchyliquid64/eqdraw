@@ -109,7 +109,7 @@ func TestLayout(t *testing.T) {
 }
 
 func TestDraw(t *testing.T) {
-	const writeToTmp = "root"
+	const writeToTmp = "root_div"
 
 	tcs := []struct {
 		name string
@@ -134,11 +134,22 @@ func TestDraw(t *testing.T) {
 		},
 		{
 			"div",
-			&Div{Numerator: &Term{Content: []rune{'1'}}, Denominator: &Term{Content: []rune{'√', '2', 'a'}}},
+			&Div{Numerator: &Term{Content: []rune{'1'}}, Denominator: &Term{Content: []rune{'2', 'a'}}},
 		},
 		{
 			"root",
 			&Root{Term: &Term{Content: []rune{'1', 'a'}}},
+		},
+		{
+			"root_div",
+			&Root{Term: &Run{Terms: []node{
+				&Div{
+					Numerator:   &Term{Content: []rune{'1'}},
+					Denominator: &Term{Content: []rune{'2', 'a'}},
+				},
+				&Term{Content: []rune{'+'}},
+				&Term{Content: []rune{'3'}},
+			}}},
 		},
 	}
 

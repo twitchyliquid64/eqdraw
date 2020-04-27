@@ -30,9 +30,10 @@ var (
 
 // Root represents a term within a surd.
 type Root struct {
-	ff         font.Face
-	layout     *layoutResult
-	numMacrons int
+	ff          font.Face
+	layout      *layoutResult
+	numMacrons  int
+	macronWidth fixed.Int26_6
 
 	Term node
 }
@@ -70,9 +71,10 @@ func (p *Root) Layout(dc *drawContext) error {
 	// Determine how many macron characters are needed for the top bar.
 	mw, _, _ := p.ff.GlyphBounds(macronChar)
 	p.numMacrons = int(math.Ceil(float64(sz.Width.Ceil()) / float64((mw.Max.X - mw.Min.X).Ceil())))
+	p.macronWidth = fixed.Int26_6(p.numMacrons) * (mw.Max.X - mw.Min.X)
 	// If the macrons are slightly larger, update the width.
-	if total := fixed.Int26_6(p.numMacrons) * (mw.Max.X - mw.Min.X); total > sz.Width {
-		sz.Width = total
+	if p.macronWidth > sz.Width {
+		sz.Width = p.macronWidth
 	}
 
 	// Add the widths for the surd.
@@ -90,7 +92,7 @@ func (p *Root) Layout(dc *drawContext) error {
 func (p *Root) computeYAdjustment() fixed.Int26_6 {
 	sb, _, _ := p.ff.GlyphBounds(surdChar)
 	mb, _, _ := p.ff.GlyphBounds(macronChar)
-	return sb.Min.Y - mb.Min.Y
+	return sb.Min.Y - mb.Min.Y - (mb.Max.Y-mb.Min.Y)/3
 }
 
 // Draw is called to render the parentheses and its contained terms.
@@ -125,13 +127,15 @@ func (p *Root) Draw(dc *drawContext, pos fixed.Point26_6, clip image.Rectangle) 
 	pos.X += advance
 	p2 := pos
 	p2.Y += p.computeYAdjustment()
+	p2.X -= 32
 	for x := 0; x < p.numMacrons; x++ {
 		dr, mask, maskp, advance, _ := p.ff.Glyph(p2, macronChar)
 		draw.DrawMask(dc.out, dr.Intersect(clip), src, image.Point{}, mask, maskp, draw.Over)
 		p2.X += advance
 	}
 
-	pos.Y -= m.Ascent
+	pos.X += (p.macronWidth - p.Term.Bounds().Width) / 3
+	pos.Y += rootPadding.Height - m.Ascent
 	if p.Term != nil {
 		if err := p.Term.Draw(dc, pos, clip); err != nil {
 			return err

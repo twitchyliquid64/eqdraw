@@ -72,7 +72,7 @@ func (d *Div) Draw(dc *drawContext, pos fixed.Point26_6, clip image.Rectangle) e
 
 	for x := 1; x < d.layout.Width.Ceil()-2; x++ {
 		for y := 0; y < divLineThickness; y++ {
-			dc.out.Set(x, pos.Y.Round()+y, color.Black)
+			dc.out.Set(pos.X.Round()+x, pos.Y.Round()+y, color.Black)
 		}
 	}
 
