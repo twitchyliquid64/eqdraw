@@ -18,11 +18,13 @@ func testContext(t *testing.T, sz image.Rectangle) *drawContext {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ff := truetype.NewFace(f, &truetype.Options{
+	o := truetype.Options{
 		Size: 24,
-	})
+	}
+	ff := truetype.NewFace(f, &o)
 
 	return &drawContext{
+		o:   o,
 		f:   f,
 		ff:  ff,
 		out: image.NewRGBA(sz),
@@ -43,6 +45,22 @@ func TestLayout(t *testing.T) {
 				Height: fixed.Int26_6(27<<6 + 0),
 			},
 		},
+		{
+			"empty_parentheses",
+			&Parenthesis{},
+			layoutResult{
+				Width:  fixed.Int26_6(17<<6 + 0),
+				Height: fixed.Int26_6(36<<6 + 0),
+			},
+		},
+		{
+			"text_in_parentheses",
+			&Parenthesis{Terms: []node{&Term{Content: []rune{'h', 'e', 'l', 'l', 'o'}}}},
+			layoutResult{
+				Width:  fixed.Int26_6(75<<6 + 42),
+				Height: fixed.Int26_6(39<<6 + 0),
+			},
+		},
 	}
 	dc := testContext(t, image.Rect(0, 0, 500, 200))
 
@@ -59,7 +77,7 @@ func TestLayout(t *testing.T) {
 }
 
 func TestDraw(t *testing.T) {
-	const writeToTmp = "term"
+	const writeToTmp = "text_in_parentheses"
 
 	tcs := []struct {
 		name string
@@ -68,6 +86,10 @@ func TestDraw(t *testing.T) {
 		{
 			"term",
 			&Term{Content: []rune{'h', 'e', 'l', 'l', 'o'}},
+		},
+		{
+			"text_in_parentheses",
+			&Parenthesis{Terms: []node{&Term{Content: []rune{'h', 'e', 'l', 'l', 'o'}}}},
 		},
 	}
 
