@@ -14,7 +14,7 @@ import (
 
 func testContext(t *testing.T, sz image.Rectangle) *drawContext {
 	t.Helper()
-	f, err := DefaultFont()
+	f, err := DefaultFontRegular()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,10 +23,17 @@ func testContext(t *testing.T, sz image.Rectangle) *drawContext {
 	}
 	ff := truetype.NewFace(f, &o)
 
+	fi, err := DefaultFontItalic()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ffi := truetype.NewFace(fi, &o)
+
 	return &drawContext{
 		o:   o,
 		f:   f,
 		ff:  ff,
+		ffi: ffi,
 		out: image.NewRGBA(sz),
 	}
 }

@@ -27,6 +27,7 @@ type node interface {
 type drawContext struct {
 	o   truetype.Options
 	ff  font.Face
+	ffi font.Face // italic font face
 	f   *truetype.Font
 	out *image.RGBA
 }

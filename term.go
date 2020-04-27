@@ -40,11 +40,16 @@ func (t *Term) Layout(dc *drawContext) error {
 	)
 	for i := 0; i < len(t.Content); i++ {
 		c := t.Content[i]
+		ff := dc.ff
+		if c >= 'a' && c <= 'z' {
+			ff = dc.ffi
+		}
+
 		var kern fixed.Int26_6
 		if prevC >= 0 {
-			kern = dc.ff.Kern(prevC, c)
+			kern = ff.Kern(prevC, c)
 		}
-		a, ok := dc.ff.GlyphAdvance(c)
+		a, ok := ff.GlyphAdvance(c)
 		if !ok {
 			continue
 		}
@@ -69,10 +74,15 @@ func (t *Term) Draw(dc *drawContext, pos fixed.Point26_6, clip image.Rectangle) 
 	prevC := rune(-1)
 	for i := 0; i < len(t.Content); i++ {
 		c := t.Content[i]
-		if prevC >= 0 {
-			pos.X += dc.ff.Kern(prevC, c)
+		ff := dc.ff
+		if c >= 'a' && c <= 'z' {
+			ff = dc.ffi
 		}
-		dr, mask, maskp, advance, ok := dc.ff.Glyph(pos, c)
+
+		if prevC >= 0 {
+			pos.X += ff.Kern(prevC, c)
+		}
+		dr, mask, maskp, advance, ok := ff.Glyph(pos, c)
 		if !ok {
 			continue
 		}

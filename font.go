@@ -35,9 +35,14 @@ func findFontPath(base string) (string, error) {
 	return "", errors.New("could not find font: " + base)
 }
 
-// DefaultFont returns the default font to use.
-func DefaultFont() (*truetype.Font, error) {
+// DefaultFontRegular returns the default font to use.
+func DefaultFontRegular() (*truetype.Font, error) {
 	return loadFont("LiberationSans-Regular.ttf")
+}
+
+// DefaultFontItalic returns the default font to use for italic.
+func DefaultFontItalic() (*truetype.Font, error) {
+	return loadFont("LiberationSans-Italic.ttf")
 }
 
 func loadFont(f string) (*truetype.Font, error) {
