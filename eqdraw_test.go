@@ -85,6 +85,14 @@ func TestLayout(t *testing.T) {
 				Height: fixed.Int26_6(72<<6 + 0),
 			},
 		},
+		{
+			"root",
+			&Root{Term: &Term{Content: []rune{'1'}}},
+			layoutResult{
+				Width:  fixed.Int26_6(50<<6 + 57),
+				Height: fixed.Int26_6(29<<6 + 0),
+			},
+		},
 	}
 	dc := testContext(t, image.Rect(0, 0, 500, 200))
 
@@ -101,7 +109,7 @@ func TestLayout(t *testing.T) {
 }
 
 func TestDraw(t *testing.T) {
-	const writeToTmp = "div"
+	const writeToTmp = "root"
 
 	tcs := []struct {
 		name string
@@ -126,7 +134,11 @@ func TestDraw(t *testing.T) {
 		},
 		{
 			"div",
-			&Div{Numerator: &Term{Content: []rune{'1'}}, Denominator: &Term{Content: []rune{'2', 'a'}}},
+			&Div{Numerator: &Term{Content: []rune{'1'}}, Denominator: &Term{Content: []rune{'√', '2', 'a'}}},
+		},
+		{
+			"root",
+			&Root{Term: &Term{Content: []rune{'1', 'a'}}},
 		},
 	}
 
