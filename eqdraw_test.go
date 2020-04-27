@@ -77,6 +77,14 @@ func TestLayout(t *testing.T) {
 				Height: fixed.Int26_6(29<<6 + 0),
 			},
 		},
+		{
+			"div",
+			&Div{Numerator: &Term{Content: []rune{'1'}}, Denominator: &Term{Content: []rune{'2'}}},
+			layoutResult{
+				Width:  fixed.Int26_6(21<<6 + 22),
+				Height: fixed.Int26_6(72<<6 + 0),
+			},
+		},
 	}
 	dc := testContext(t, image.Rect(0, 0, 500, 200))
 
@@ -93,7 +101,7 @@ func TestLayout(t *testing.T) {
 }
 
 func TestDraw(t *testing.T) {
-	const writeToTmp = "multi_text_in_parentheses"
+	const writeToTmp = "div"
 
 	tcs := []struct {
 		name string
@@ -115,6 +123,10 @@ func TestDraw(t *testing.T) {
 					&Term{Content: []rune{'M', 'A', 'T', 'E'}},
 				},
 			}},
+		},
+		{
+			"div",
+			&Div{Numerator: &Term{Content: []rune{'1'}}, Denominator: &Term{Content: []rune{'2', 'a'}}},
 		},
 	}
 
