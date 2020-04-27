@@ -32,7 +32,7 @@ func findFontPath(base string) (string, error) {
 		}
 	}
 
-	return "", errors.New("could not find resource kite.glade")
+	return "", errors.New("could not find font: " + base)
 }
 
 // DefaultFont returns the default font to use.

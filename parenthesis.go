@@ -21,10 +21,9 @@ var (
 type Parenthesis struct {
 	ff font.Face
 
-	layout      *layoutResult
-	tallestTerm fixed.Int26_6
+	layout *layoutResult
 
-	Terms []node
+	Term node
 }
 
 // Bounds returns the width and height of the rendered term, as computed by
@@ -37,22 +36,16 @@ func (p *Parenthesis) Bounds() *layoutResult {
 // Layout is called during the layout pass to compute the rendered size of this node.
 func (p *Parenthesis) Layout(dc *drawContext) error {
 	sz := layoutResult{}
-
-	var tallestTerm fixed.Int26_6
-	for _, t := range p.Terms {
-		if err := t.Layout(dc); err != nil {
+	if p.Term != nil {
+		if err := p.Term.Layout(dc); err != nil {
 			return err
 		}
-		b := t.Bounds()
+		b := p.Term.Bounds()
 		sz.Width += b.Width
 		sz.Height += b.Height
-		if b.Height > tallestTerm {
-			tallestTerm = b.Height
-		}
 	}
-	p.tallestTerm = tallestTerm
 
-	// Determine the appropriate font size so the parentheses wrap all terms vertically.
+	// Determine the appropriate font size so the parentheses wraps the term.
 	for fz := dc.o.Size; fz < 144; fz++ {
 		opts := dc.o
 		opts.Size = fz
@@ -86,18 +79,14 @@ func (p *Parenthesis) Draw(dc *drawContext, pos fixed.Point26_6, clip image.Rect
 	draw.DrawMask(dc.out, dr.Intersect(clip), src, image.Point{}, mask, maskp, draw.Over)
 	pos.X += advance
 
-	pos.Y -= asc
-	for _, t := range p.Terms {
-		sz := t.Bounds()
-		adjustY := (p.tallestTerm - sz.Height) / 2
-		pos.Y += adjustY
-		if err := t.Draw(dc, pos, clip); err != nil {
+	if p.Term != nil {
+		pos.Y -= asc
+		if err := p.Term.Draw(dc, pos, clip); err != nil {
 			return err
 		}
-		pos.Y -= adjustY
-		pos.X += sz.Width
+		pos.X += p.Term.Bounds().Width
+		pos.Y += asc
 	}
-	pos.Y += asc
 
 	dr, mask, maskp, advance, _ = p.ff.Glyph(pos, ')')
 	draw.DrawMask(dc.out, dr.Intersect(clip), src, image.Point{}, mask, maskp, draw.Over)

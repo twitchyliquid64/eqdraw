@@ -55,10 +55,26 @@ func TestLayout(t *testing.T) {
 		},
 		{
 			"text_in_parentheses",
-			&Parenthesis{Terms: []node{&Term{Content: []rune{'h', 'e', 'l', 'l', 'o'}}}},
+			&Parenthesis{Term: &Term{Content: []rune{'h', 'e', 'l', 'l', 'o'}}},
 			layoutResult{
 				Width:  fixed.Int26_6(75<<6 + 42),
 				Height: fixed.Int26_6(39<<6 + 0),
+			},
+		},
+		{
+			"run_in_parentheses",
+			&Parenthesis{Term: &Run{}},
+			layoutResult{
+				Width:  fixed.Int26_6(21<<6 + 0),
+				Height: fixed.Int26_6(36<<6 + 0),
+			},
+		},
+		{
+			"run",
+			&Run{Terms: []node{&Term{Content: []rune{'h', 'e', 'l', 'l', 'o'}}}},
+			layoutResult{
+				Width:  fixed.Int26_6(60<<6 + 44),
+				Height: fixed.Int26_6(29<<6 + 0),
 			},
 		},
 	}
@@ -77,7 +93,7 @@ func TestLayout(t *testing.T) {
 }
 
 func TestDraw(t *testing.T) {
-	const writeToTmp = "text_in_parentheses"
+	const writeToTmp = "multi_text_in_parentheses"
 
 	tcs := []struct {
 		name string
@@ -89,7 +105,16 @@ func TestDraw(t *testing.T) {
 		},
 		{
 			"text_in_parentheses",
-			&Parenthesis{Terms: []node{&Term{Content: []rune{'h', 'e', 'l', 'l', 'o'}}}},
+			&Parenthesis{Term: &Term{Content: []rune{'h', 'e', 'l', 'l', 'o'}}},
+		},
+		{
+			"multi_text_in_parentheses",
+			&Parenthesis{Term: &Run{
+				Terms: []node{
+					&Term{Content: []rune{'h', 'e', 'l', 'l', 'o'}},
+					&Term{Content: []rune{'M', 'A', 'T', 'E'}},
+				},
+			}},
 		},
 	}
 
