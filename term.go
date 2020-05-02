@@ -33,7 +33,7 @@ func (t *Term) Bounds() *layoutResult {
 }
 
 // Layout is called during the layout pass to compute the rendered size of this node.
-func (t *Term) Layout(dc *drawContext) error {
+func (t *Term) Layout(dc *DrawContext) error {
 	var (
 		prevC = rune(-1)
 		w     = fixed.Int26_6(0)
@@ -66,7 +66,7 @@ func (t *Term) Layout(dc *drawContext) error {
 }
 
 // Draw is called to render the term.
-func (t *Term) Draw(dc *drawContext, pos fixed.Point26_6, clip image.Rectangle) error {
+func (t *Term) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) error {
 	src := image.NewUniform(color.Black)
 	pos.X += termMargin.Width / 2
 	pos.Y += dc.ff.Metrics().Ascent + termMargin.Height/2

@@ -34,7 +34,7 @@ func (p *Parenthesis) Bounds() *layoutResult {
 }
 
 // Layout is called during the layout pass to compute the rendered size of this node.
-func (p *Parenthesis) Layout(dc *drawContext) error {
+func (p *Parenthesis) Layout(dc *DrawContext) error {
 	sz := layoutResult{}
 	if p.Term != nil {
 		if err := p.Term.Layout(dc); err != nil {
@@ -69,7 +69,7 @@ func (p *Parenthesis) Layout(dc *drawContext) error {
 }
 
 // Draw is called to render the parentheses and its contained terms.
-func (p *Parenthesis) Draw(dc *drawContext, pos fixed.Point26_6, clip image.Rectangle) error {
+func (p *Parenthesis) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) error {
 	src := image.NewUniform(color.Black)
 	asc := p.ff.Metrics().Ascent
 	pos.X += paraMargin.Width / 2

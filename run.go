@@ -29,7 +29,7 @@ func (r *Run) Bounds() *layoutResult {
 }
 
 // Layout is called during the layout pass to compute the rendered size of this node.
-func (r *Run) Layout(dc *drawContext) error {
+func (r *Run) Layout(dc *DrawContext) error {
 	sz := runMargin
 
 	var tallestTerm fixed.Int26_6
@@ -51,7 +51,7 @@ func (r *Run) Layout(dc *drawContext) error {
 }
 
 // Draw is called to render the series of terms.
-func (r *Run) Draw(dc *drawContext, pos fixed.Point26_6, clip image.Rectangle) error {
+func (r *Run) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) error {
 	pos.X += runMargin.Width / 2
 	pos.Y += runMargin.Height / 2
 

@@ -3,7 +3,6 @@ package eqdraw
 import (
 	"image"
 	"image/color"
-	"image/draw"
 	"image/png"
 	"os"
 	"testing"
@@ -12,7 +11,7 @@ import (
 	"golang.org/x/image/math/fixed"
 )
 
-func testContext(t *testing.T, sz image.Rectangle) *drawContext {
+func testContext(t *testing.T, sz image.Rectangle) *DrawContext {
 	t.Helper()
 	f, err := DefaultFontRegular()
 	if err != nil {
@@ -29,7 +28,7 @@ func testContext(t *testing.T, sz image.Rectangle) *drawContext {
 	}
 	ffi := truetype.NewFace(fi, &o)
 
-	return &drawContext{
+	return &DrawContext{
 		o:   o,
 		f:   f,
 		ff:  ff,
@@ -160,23 +159,14 @@ func TestDraw(t *testing.T) {
 		},
 	}
 
-	clipRegion := image.Rectangle{
-		Min: image.Point{X: -1, Y: -1},
-		Max: image.Point{X: 20000, Y: 20000},
-	}
-
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			dc := testContext(t, image.Rect(0, 0, 500, 200))
-			if err := tc.node.Layout(dc); err != nil {
-				t.Fatalf("Layout() failed: %v", err)
+			dc, err := NewContext(truetype.Options{Size: 24})
+			if err != nil {
+				t.Fatal(err)
 			}
 
-			// Make a smaller canvas, and color the background white.
-			dc.out = image.NewRGBA(image.Rectangle{Max: image.Point{X: tc.node.Bounds().Width.Ceil(), Y: tc.node.Bounds().Height.Ceil()}})
-			draw.Draw(dc.out, clipRegion, image.NewUniform(color.White), image.Point{}, draw.Over)
-
-			err := tc.node.Draw(dc, fixed.Point26_6{}, clipRegion)
+			out, err := dc.DrawRGBA(tc.node, image.NewUniform(color.White))
 			if err != nil {
 				t.Fatalf("Draw() failed: %v", err)
 			}
@@ -187,7 +177,7 @@ func TestDraw(t *testing.T) {
 					t.Fatal(err)
 				}
 				defer f.Close()
-				if err := png.Encode(f, dc.out); err != nil {
+				if err := png.Encode(f, out); err != nil {
 					t.Fatal(err)
 				}
 			}

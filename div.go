@@ -32,7 +32,7 @@ func (d *Div) Bounds() *layoutResult {
 }
 
 // Layout is called during the layout pass to compute the rendered size of this node.
-func (d *Div) Layout(dc *drawContext) error {
+func (d *Div) Layout(dc *DrawContext) error {
 	sz := divMargin
 	sz.Height += fixed.I(divLineThickness) + fixed.I(divLineSpacing*2)
 
@@ -58,7 +58,7 @@ func (d *Div) Layout(dc *drawContext) error {
 }
 
 // Draw is called to render the parentheses and its contained terms.
-func (d *Div) Draw(dc *drawContext, pos fixed.Point26_6, clip image.Rectangle) error {
+func (d *Div) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) error {
 	pos.Y += divMargin.Height / 2
 
 	nb := d.Numerator.Bounds()
