@@ -166,7 +166,7 @@ func TestDraw(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			out, err := dc.DrawRGBA(tc.node, image.NewUniform(color.White))
+			out, err := dc.DrawRGBA(tc.node, image.NewUniform(color.RGBA{A: 255, R: 255}), image.NewUniform(color.White))
 			if err != nil {
 				t.Fatalf("Draw() failed: %v", err)
 			}

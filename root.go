@@ -97,7 +97,6 @@ func (p *Root) computeYAdjustment() fixed.Int26_6 {
 
 // Draw is called to render the parentheses and its contained terms.
 func (p *Root) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) error {
-	src := image.NewUniform(color.Black)
 	m := p.ff.Metrics()
 	pos.X += rootMargin.Width / 2
 	pos.Y += rootMargin.Height / 2
@@ -120,9 +119,9 @@ func (p *Root) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) 
 	pos.Y += m.Ascent
 	dr, mask, maskp, advance, _ := p.ff.Glyph(pos, surdChar)
 	if rootDebug {
-		draw.DrawMask(dc.out, dr.Intersect(clip), src, image.Point{}, image.NewUniform(color.RGBA{A: 120}), maskp, draw.Over)
+		draw.DrawMask(dc.out, dr.Intersect(clip), dc.fg, image.Point{}, image.NewUniform(color.RGBA{A: 120}), maskp, draw.Over)
 	}
-	draw.DrawMask(dc.out, dr.Intersect(clip), src, image.Point{}, mask, maskp, draw.Over)
+	draw.DrawMask(dc.out, dr.Intersect(clip), dc.fg, image.Point{}, mask, maskp, draw.Over)
 
 	pos.X += advance
 	p2 := pos
@@ -130,7 +129,7 @@ func (p *Root) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) 
 	p2.X -= 32
 	for x := 0; x < p.numMacrons; x++ {
 		dr, mask, maskp, advance, _ := p.ff.Glyph(p2, macronChar)
-		draw.DrawMask(dc.out, dr.Intersect(clip), src, image.Point{}, mask, maskp, draw.Over)
+		draw.DrawMask(dc.out, dr.Intersect(clip), dc.fg, image.Point{}, mask, maskp, draw.Over)
 		p2.X += advance
 	}
 

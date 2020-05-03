@@ -67,7 +67,6 @@ func (t *Term) Layout(dc *DrawContext) error {
 
 // Draw is called to render the term.
 func (t *Term) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) error {
-	src := image.NewUniform(color.Black)
 	pos.X += termMargin.Width / 2
 	pos.Y += dc.ff.Metrics().Ascent + termMargin.Height/2
 
@@ -90,7 +89,7 @@ func (t *Term) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) 
 			mask = image.NewUniform(color.RGBA{A: 100})
 		}
 
-		draw.DrawMask(dc.out, dr.Intersect(clip), src, image.Point{}, mask, maskp, draw.Over)
+		draw.DrawMask(dc.out, dr.Intersect(clip), dc.fg, image.Point{}, mask, maskp, draw.Over)
 		pos.X += advance
 		prevC = c
 	}

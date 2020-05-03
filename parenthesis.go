@@ -2,7 +2,6 @@ package eqdraw
 
 import (
 	"image"
-	"image/color"
 	"image/draw"
 
 	"github.com/golang/freetype/truetype"
@@ -70,13 +69,12 @@ func (p *Parenthesis) Layout(dc *DrawContext) error {
 
 // Draw is called to render the parentheses and its contained terms.
 func (p *Parenthesis) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rectangle) error {
-	src := image.NewUniform(color.Black)
 	asc := p.ff.Metrics().Ascent
 	pos.X += paraMargin.Width / 2
 	pos.Y += asc + paraMargin.Height/4
 
 	dr, mask, maskp, advance, _ := p.ff.Glyph(pos, '(')
-	draw.DrawMask(dc.out, dr.Intersect(clip), src, image.Point{}, mask, maskp, draw.Over)
+	draw.DrawMask(dc.out, dr.Intersect(clip), dc.fg, image.Point{}, mask, maskp, draw.Over)
 	pos.X += advance
 
 	if p.Term != nil {
@@ -89,6 +87,6 @@ func (p *Parenthesis) Draw(dc *DrawContext, pos fixed.Point26_6, clip image.Rect
 	}
 
 	dr, mask, maskp, advance, _ = p.ff.Glyph(pos, ')')
-	draw.DrawMask(dc.out, dr.Intersect(clip), src, image.Point{}, mask, maskp, draw.Over)
+	draw.DrawMask(dc.out, dr.Intersect(clip), dc.fg, image.Point{}, mask, maskp, draw.Over)
 	return nil
 }
