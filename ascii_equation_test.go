@@ -113,6 +113,14 @@ func TestAsciiEquation(t *testing.T) {
 				Denominator: &Term{Content: []rune{'2'}},
 			}}},
 		},
+		{
+			name:  "eq with div stack overflow",
+			input: "y = mx + b/2",
+			expected: &Run{Terms: []node{&Term{Content: []rune{'y'}}, &Term{Content: []rune{'='}}, &Div{
+				Numerator:   &Run{Terms: []node{&Term{Content: []rune{'m', 'x'}}, &Term{Content: []rune{'+'}}, &Term{Content: []rune{'b'}}}},
+				Denominator: &Term{Content: []rune{'2'}},
+			}}},
+		},
 	}
 
 	for _, tc := range tcs {

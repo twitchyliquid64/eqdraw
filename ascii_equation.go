@@ -53,16 +53,23 @@ func (s *eqSpec) postProcess() {
 	if idx > 0 {
 		// Don't capture anything delimited by an equals sign.
 		var (
-			num       = s.terms[:idx]
-			remaining = []node{}
+			candidates = s.terms[:idx]
+			num        = []node{}
+			remaining  = []node{}
 		)
-		for i := len(num) - 1; i > 0; i-- {
-			if t, isTerm := num[i].(*Term); isTerm && string(t.Content) == "=" {
-				remaining = num[:i+1]
-				num = num[i+1:]
-				break
+	l:
+		for i := len(candidates) - 1; i > 0; i-- {
+			if t, isTerm := candidates[i].(*Term); isTerm && string(t.Content) == "=" {
+				remaining = append(remaining, candidates[:i]...)
+				remaining = append(remaining, t)
+				num = append(num, candidates[i+1:]...)
+				break l
 			}
 		}
+		if len(num) == 0 {
+			num = candidates
+		}
+		// fmt.Printf("remaining = %+v, num = %+v\n", remaining, num)
 
 		var tmp eqSpec
 		tmp.pushNode(eqSpec{terms: num})
