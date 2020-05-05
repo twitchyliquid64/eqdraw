@@ -105,6 +105,14 @@ func TestAsciiEquation(t *testing.T) {
 				Denominator: &Run{Terms: []node{&Term{Content: []rune{'2'}}, &Term{Content: []rune{'+'}}, &Term{Content: []rune{'1'}}}},
 			},
 		},
+		{
+			name:  "eq with div",
+			input: "2x = 1/2",
+			expected: &Run{Terms: []node{&Term{Content: []rune{'2', 'x'}}, &Term{Content: []rune{'='}}, &Div{
+				Numerator:   &Term{Content: []rune{'1'}},
+				Denominator: &Term{Content: []rune{'2'}},
+			}}},
+		},
 	}
 
 	for _, tc := range tcs {

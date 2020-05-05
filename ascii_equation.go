@@ -51,8 +51,21 @@ func (s *eqSpec) postProcess() {
 	}
 
 	if idx > 0 {
+		// Don't capture anything delimited by an equals sign.
+		var (
+			num       = s.terms[:idx]
+			remaining = []node{}
+		)
+		for i := len(num) - 1; i > 0; i-- {
+			if t, isTerm := num[i].(*Term); isTerm && string(t.Content) == "=" {
+				remaining = num[:i+1]
+				num = num[i+1:]
+				break
+			}
+		}
+
 		var tmp eqSpec
-		tmp.pushNode(eqSpec{terms: s.terms[:idx]})
+		tmp.pushNode(eqSpec{terms: num})
 		tmp.pushNode(eqSpec{terms: s.terms[idx+1:]})
 		d := &Div{
 			Numerator:   tmp.terms[0],
@@ -64,7 +77,12 @@ func (s *eqSpec) postProcess() {
 		if paren, isParenth := d.Denominator.(*Parenthesis); isParenth {
 			d.Denominator = paren.Term
 		}
-		s.terms = []node{d}
+
+		if len(remaining) > 0 {
+			s.terms = append(remaining, d)
+		} else {
+			s.terms = []node{d}
+		}
 	}
 }
 
